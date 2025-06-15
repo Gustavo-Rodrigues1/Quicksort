@@ -3,15 +3,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+//Contadores de trocar+chamadas de cada tipo
 int TrocasChamadasLomutoPadrao = 0, TrocasChamadasLomutoAleatorio = 0, TrocasChamadasLomutoMediana = 0;
 int TrocasChamadasHoarePadrao = 0, TrocasChamadasHoareAleatorio = 0, TrocasChamadasHoareMediana = 0;
 
+//Struct pra gravar a contagem com o seu determinado tipo de ordenação
 typedef struct
 {
     int numeroChamadasTrocas;
     char tipo[3];
 } Ordenacoes;
 
+//Função de troca entre dois valores com um contador que incrementa sempre que houver uma troca
 void trocar(int *a, int *b, int *contadorTrocasChamadas)
 {
     int temp = *a;
@@ -20,6 +23,7 @@ void trocar(int *a, int *b, int *contadorTrocasChamadas)
     (*contadorTrocasChamadas)++;
 }
 
+//Função mergesort para impressão do tipo de ordenção com menor número de chamadas + trocas para o maior número
 void merge(Ordenacoes *vetor, int inicio, int meio, int fim)
 {
     Ordenacoes *aux = (Ordenacoes *)malloc((fim - inicio + 1) * sizeof(Ordenacoes));
@@ -56,6 +60,7 @@ void merge(Ordenacoes *vetor, int inicio, int meio, int fim)
     free(aux);
 }
 
+//Recursividade do mergeSort
 void mergeSort(Ordenacoes *vetor, int inicio, int fim)
 {
     if (inicio < fim)
@@ -309,6 +314,7 @@ int main(int argc, char* argv[])
     FILE *input = fopen(argv[1], "r");
     FILE *output = fopen(argv[2], "w");
 
+    //Verifica se o arquivo foi aberto corretamente
     if (input == NULL || output == NULL)
     {
         fprintf(output, "Falha ao abrir o arquivo!");
@@ -316,14 +322,18 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    
     int totalDeVetores, qtdDeElementosVetor;
 
+    //Leitura dos dados nos arquivos
     fscanf(input, "%d", &totalDeVetores);
     for (int i = 0; i < totalDeVetores; i++)
     {
+        //Vetor de structs para a impressão
         Ordenacoes *vetorOrdenacoes = (Ordenacoes *)malloc(7 * sizeof(Ordenacoes));
         fscanf(input, "%d", &qtdDeElementosVetor);
 
+        //Declaração de vetores
         int *vetorDeNumerosLomutoPadrao = (int *)malloc(qtdDeElementosVetor * sizeof(int));
         int *vetorDeNumerosLomutoAleatorio = (int *)malloc(qtdDeElementosVetor * sizeof(int));
         int *vetorDeNumerosLomutoMediana = (int *)malloc(qtdDeElementosVetor * sizeof(int));
@@ -331,6 +341,7 @@ int main(int argc, char* argv[])
         int *vetorDeNumerosHoareAleatorio = (int *)malloc(qtdDeElementosVetor * sizeof(int));
         int *vetorDeNumerosHoareMediana = (int *)malloc(qtdDeElementosVetor * sizeof(int));
 
+        //Reset no contador para usar em um novo vetor
         TrocasChamadasLomutoPadrao = 0, TrocasChamadasLomutoAleatorio = 0, TrocasChamadasLomutoMediana = 0;
         TrocasChamadasHoarePadrao = 0, TrocasChamadasHoareAleatorio = 0, TrocasChamadasHoareMediana = 0;
         for (int i = 0; i < qtdDeElementosVetor; i++)
@@ -344,6 +355,8 @@ int main(int argc, char* argv[])
             vetorDeNumerosHoareAleatorio[i] = valor;
             vetorDeNumerosHoareMediana[i] = valor;
         }
+
+        //Ordenações e suas respectivas siglas
         quicksortLomutoPadrao(vetorDeNumerosLomutoPadrao, 0, qtdDeElementosVetor - 1, &TrocasChamadasLomutoPadrao);
         vetorOrdenacoes[0].numeroChamadasTrocas = TrocasChamadasLomutoPadrao;
         strcpy(vetorOrdenacoes[0].tipo, "LP");
@@ -363,10 +376,13 @@ int main(int argc, char* argv[])
         vetorOrdenacoes[5].numeroChamadasTrocas = TrocasChamadasHoareAleatorio;
         strcpy(vetorOrdenacoes[5].tipo, "HA");
 
+        //Ordenação por meio do número de chamadas+trocas para a impressão
         mergeSort(vetorOrdenacoes, 0, 5);
 
+        //Impressão
         fprintf(output, "%d:N(%d),%s(%d),%s(%d),%s(%d),%s(%d),%s(%d),%s(%d)\n", i, qtdDeElementosVetor, vetorOrdenacoes[0].tipo, vetorOrdenacoes[0].numeroChamadasTrocas, vetorOrdenacoes[1].tipo, vetorOrdenacoes[1].numeroChamadasTrocas, vetorOrdenacoes[2].tipo, vetorOrdenacoes[2].numeroChamadasTrocas, vetorOrdenacoes[3].tipo, vetorOrdenacoes[3].numeroChamadasTrocas, vetorOrdenacoes[4].tipo, vetorOrdenacoes[4].numeroChamadasTrocas, vetorOrdenacoes[5].tipo, vetorOrdenacoes[5].numeroChamadasTrocas);
 
+        //Liberação de memória
         free(vetorDeNumerosLomutoPadrao);
         free(vetorDeNumerosLomutoAleatorio);
         free(vetorDeNumerosLomutoMediana);
